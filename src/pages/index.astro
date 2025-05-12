@@ -401,7 +401,7 @@ const metaKeywords =
               <tr>
                 <th>Продажна Цена по м²</th>
                 <th>Вкупна Продажна Вредност</th>
-                <th class="loss-header">Загуба</th>
+                <th style="color: red;" class="loss-header">Загуба</th>
               </tr>
             </thead>
             <tbody>
@@ -412,7 +412,7 @@ const metaKeywords =
             <tr>
               <td>€${parseInt(price).toLocaleString()}</td>
               <td>€${option.resaleValue.toLocaleString()}</td>
-              <td class="loss-value">€${option.loss.toLocaleString()}</td>
+              <td style="color: red;">€${option.loss.toLocaleString()}</td>
             </tr>
           `;
         }
