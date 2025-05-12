@@ -1,0 +1,495 @@
+---
+// MK: Преводи и променливи за страницата
+const pageTitle = 'Калкулатор за Загуба на Имот';
+const metaDescription =
+  'Пресметајте потенцијална загуба на имот врз основа на површина и куповна цена.';
+const metaKeywords =
+  'имот, недвижнини, загуба, калкулатор, инвестиција, пресметка, цена, картички, грид';
+---
+
+<html lang="mk">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="keywords" content={metaKeywords} />
+    <meta name="description" content={metaDescription} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content="website" />
+    <title>{pageTitle}</title>
+    <style>
+      :root {
+        --primary-color: #007bff;
+        --primary-hover-color: #0056b3;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --success-hover-color: #1e7e34;
+        --danger-color: #dc3545;
+        --light-bg: #f8f9fa;
+        --card-bg: #ffffff;
+        --border-color: #dee2e6;
+        --text-color: #212529;
+        --label-color: #495057;
+        --input-focus-border: #80bdff;
+        --input-focus-shadow: rgba(0, 123, 255, 0.25);
+        --container-bg: #ffffff;
+        --body-bg: #eef1f5;
+        --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+        --grid-gap: 15px;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, sans-serif;
+        margin: 0;
+        padding: 15px;
+        background-color: var(--body-bg);
+        color: var(--text-color);
+        line-height: 1.5;
+        font-size: 15px;
+      }
+      .main-container {
+        background-color: var(--container-bg);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        max-width: 1200px;
+        margin: 20px auto;
+      }
+      h1 {
+        color: #343a40;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 1.7em;
+        font-weight: 600;
+      }
+      .global-controls {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: var(--light-bg);
+        border-radius: 5px;
+        border: 1px solid var(--border-color);
+      }
+      .resale-prices-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: var(--light-bg);
+        border-radius: 5px;
+        border: 1px solid var(--border-color);
+      }
+      .resale-prices-label {
+        font-weight: 500;
+        font-size: 0.95em;
+        color: var(--label-color);
+        margin-bottom: 8px;
+        display: block;
+      }
+      .resale-prices-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .resale-price-input {
+        width: 90px;
+        padding: 7px 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        font-size: 0.95em;
+        margin-bottom: 0;
+      }
+      .add-resale-price-btn {
+        background-color: var(--primary-color);
+        margin-left: 10px;
+        padding: 7px 12px;
+        font-size: 1em;
+        border-radius: 5px;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.15s;
+      }
+      .add-resale-price-btn:hover {
+        background-color: var(--primary-hover-color);
+      }
+      .remove-resale-price-btn {
+        background: none;
+        border: none;
+        color: var(--danger-color);
+        font-size: 1.2em;
+        margin-left: 2px;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+      #calculator-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--grid-gap);
+      }
+      .calculator-instance {
+        border: 1px solid var(--border-color);
+        padding: 15px;
+        border-radius: 6px;
+        background-color: var(--card-bg);
+        box-shadow: var(--card-shadow);
+        display: flex;
+        flex-direction: column;
+        transition: box-shadow 0.2s ease-in-out;
+      }
+      .calculator-instance:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      }
+      .results-table {
+        margin-top: auto;
+      }
+      .results-table h4 {
+        margin-top: 10px;
+        margin-bottom: 6px;
+        font-size: 1.05em;
+        color: #343a40;
+        font-weight: 600;
+      }
+      .results-table p {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+      }
+      .results-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 0.85em;
+      }
+      .results-table th,
+      .results-table td {
+        border: 1px solid var(--border-color);
+        padding: 6px 8px;
+        text-align: right;
+        vertical-align: middle;
+      }
+      .results-table th {
+        background-color: #e9ecef;
+        text-align: center;
+        font-weight: 600;
+        color: var(--label-color);
+      }
+      .results-table td:first-child {
+        text-align: left;
+      }
+      .results-table tr:nth-child(even) td {
+        background-color: #fdfdfd;
+      }
+      .loss-value {
+        font-weight: bold;
+        color: var(--danger-color);
+      }
+      .initial-message {
+        font-size: 0.9em;
+        color: var(--secondary-color);
+        padding: 10px;
+        text-align: center;
+        margin-top: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <h1>{pageTitle}</h1>
+
+      <div class="formula-explanation">
+        <h3>Како функционира калкулаторот?</h3>
+        <p>
+          Овој калкулатор е наменет за ситуации кога ви се нуди стан со поголема
+          површина, но само дел од него е легализиран и внесен во документите.
+        </p>
+        <p>
+          <strong>Пример:</strong> Ви се нуди стан од <b>150 м²</b>, но само <b
+            >75 м²</b
+          > се легализирани и внесени во имотен лист. Цената што ви ја бараат е <b
+            >2700 €</b
+          > по <b>легализиран м²</b> (значи плаќате 2700 &times; 75 = 202.500 €).
+        </p>
+        <p>
+          Ако утре сакате да го продадете станот по нормална пазарна цена (на
+          пример <b>1850 €</b> по м²), ќе можете легално да продадете само <b
+            >75 м²</b
+          >. Значи, ќе добиете 75 &times; 1850 = 138.750 €.
+        </p>
+        <p>
+          <b>Загубата</b> се пресметува како разлика меѓу тоа што сте платиле и тоа
+          што можете легално да добиете:
+        </p>
+        <ul>
+          <li>
+            <code
+              >Загуба = (Легализирана површина &times; Куповна цена по м²) -
+              (Легализирана површина &times; Продажна цена по м²)</code
+            >
+          </li>
+        </ul>
+        <p>
+          Овој калкулатор ви овозможува да внесете различни површини и цени за
+          да ја видите потенцијалната загуба во вакви ситуации.
+        </p>
+      </div>
+
+      <div class="global-controls">
+        <label for="purchase-price">Куповна Цена по м² (€):</label>
+        <input type="number" id="purchase-price" value="2700" />
+      </div>
+
+      <div class="resale-prices-section">
+        <span class="resale-prices-label">Продажни цени по м² (€):</span>
+        <div class="resale-prices-list" id="resale-prices-list">
+          <!-- JS will populate these -->
+        </div>
+        <button
+          type="button"
+          class="add-resale-price-btn"
+          id="add-resale-price-btn">+ Додај цена</button
+        >
+      </div>
+
+      <div id="calculator-container">
+        <div class="calculator-instance">
+          <label>Површина (м²):</label>
+          <input
+            type="number"
+            class="area-input"
+            value="45.1"
+            placeholder="Внесете површина во м²"
+          />
+          <div class="results-table"></div>
+        </div>
+        <div class="calculator-instance">
+          <label>Површина (м²):</label>
+          <input
+            type="number"
+            class="area-input"
+            value="61.96"
+            placeholder="Внесете површина во м²"
+          />
+          <div class="results-table"></div>
+        </div>
+        <div class="calculator-instance">
+          <label>Површина (м²):</label>
+          <input
+            type="number"
+            class="area-input"
+            value="73.5"
+            placeholder="Внесете површина во м²"
+          />
+          <div class="results-table"></div>
+        </div>
+      </div>
+
+      <button id="add-field-button">+ Додај Нова Картичка за Површина</button>
+    </div>
+
+    <script is:inline>
+      // Dynamic resale prices state
+      let resalePrices = [1850, 1950, 2050, 2150];
+
+      function renderResalePrices() {
+        const list = document.getElementById('resale-prices-list');
+        list.innerHTML = '';
+        resalePrices.forEach((price, idx) => {
+          const wrapper = document.createElement('div');
+          wrapper.style.display = 'flex';
+          wrapper.style.alignItems = 'center';
+
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'resale-price-input';
+          input.value = price;
+          input.min = 0;
+          input.setAttribute('aria-label', 'Продажна цена по м²');
+          input.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            resalePrices[idx] = isNaN(val) ? 0 : val;
+            updateAllTables();
+          });
+
+          wrapper.appendChild(input);
+
+          if (resalePrices.length > 1) {
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-resale-price-btn';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'Избриши цена';
+            removeBtn.onclick = () => {
+              resalePrices.splice(idx, 1);
+              renderResalePrices();
+              updateAllTables();
+            };
+            wrapper.appendChild(removeBtn);
+          }
+
+          list.appendChild(wrapper);
+        });
+      }
+
+      function calculatePropertyLoss(area, purchasePricePerSqm) {
+        const purchaseCost = +(area * purchasePricePerSqm).toFixed(2);
+        const result = {
+          area: area,
+          purchaseCost: purchaseCost,
+          purchasePricePerSqm: purchasePricePerSqm,
+          resaleOptions: {},
+        };
+
+        resalePrices.forEach((price) => {
+          if (price > 0) {
+            const resaleValue = +(area * price).toFixed(2);
+            const loss = +(purchaseCost - resaleValue).toFixed(2);
+            result.resaleOptions[price] = {
+              resaleValue,
+              loss,
+            };
+          }
+        });
+        return result;
+      }
+
+      function generateTableHTML(result) {
+        if (!result || Object.keys(result.resaleOptions).length === 0) {
+          return '<p class="initial-message">Внесете валидна површина за да ги видите пресметките.</p>';
+        }
+
+        let tableHTML = `
+          <h4>Резултати за ${result.area} м² (Купено по €${result.purchasePricePerSqm.toLocaleString()}/м²)</h4>
+          <p><strong>Вкупна Куповна Цена: €${result.purchaseCost.toLocaleString()}</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Продажна Цена по м² (€)</th>
+                <th>Вкупна Продажна Вредност (€)</th>
+                <th>Потенцијална Загуба (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        for (const price in result.resaleOptions) {
+          const option = result.resaleOptions[price];
+          tableHTML += `
+            <tr>
+              <td>€${parseInt(price).toLocaleString()}</td>
+              <td>€${option.resaleValue.toLocaleString()}</td>
+              <td class="loss-value">€${option.loss.toLocaleString()}</td>
+            </tr>
+          `;
+        }
+        tableHTML += `
+            </tbody>
+          </table>
+        `;
+        return tableHTML;
+      }
+
+      function updateTable(instanceDiv) {
+        const areaInput = instanceDiv.querySelector('.area-input');
+        const resultsTableDiv = instanceDiv.querySelector('.results-table');
+        const purchasePriceInput = document.getElementById('purchase-price');
+
+        const area = parseFloat(areaInput.value);
+        const purchasePricePerSqm = parseFloat(purchasePriceInput.value);
+
+        if (areaInput.value.trim() === '' && purchasePricePerSqm > 0) {
+          resultsTableDiv.innerHTML =
+            '<p class="initial-message">Внесете површина за пресметка.</p>';
+        } else if (area > 0 && purchasePricePerSqm > 0) {
+          const calculationResult = calculatePropertyLoss(
+            area,
+            purchasePricePerSqm
+          );
+          resultsTableDiv.innerHTML = generateTableHTML(calculationResult);
+        } else {
+          resultsTableDiv.innerHTML =
+            '<p class="initial-message">Ве молиме внесете валидна површина и куповна цена.</p>';
+        }
+      }
+
+      function updateAllTables() {
+        const instances = document.querySelectorAll(
+          '#calculator-container .calculator-instance'
+        );
+        instances.forEach((instance) => {
+          updateTable(instance);
+        });
+      }
+
+      function createCalculatorInstance() {
+        const container = document.getElementById('calculator-container');
+        const templateInstance = document.querySelector(
+          '#calculator-container .calculator-instance'
+        );
+        let newInstance;
+        if (templateInstance) {
+          newInstance = templateInstance.cloneNode(true);
+        } else {
+          newInstance = document.createElement('div');
+          newInstance.className = 'calculator-instance';
+          newInstance.innerHTML = `
+              <label>Површина (м²):</label>
+              <input type="number" class="area-input" placeholder="Внесете површина во м²" />
+              <div class="results-table"></div>
+            `;
+        }
+
+        const newAreaInput = newInstance.querySelector('.area-input');
+        const newResultsTableDiv = newInstance.querySelector('.results-table');
+
+        newAreaInput.value = '';
+        newAreaInput.placeholder = 'Внесете површина во м²';
+        newResultsTableDiv.innerHTML =
+          '<p class="initial-message">Внесете површина за пресметка.</p>';
+
+        newAreaInput.addEventListener('input', () => updateTable(newInstance));
+        container.appendChild(newInstance);
+        newAreaInput.focus();
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        renderResalePrices();
+
+        const addResalePriceBtn = document.getElementById(
+          'add-resale-price-btn'
+        );
+        addResalePriceBtn.addEventListener('click', () => {
+          // Add a new resale price, default to last+100 or 1000 if empty
+          let next =
+            resalePrices.length > 0
+              ? resalePrices[resalePrices.length - 1] + 100
+              : 1000;
+          resalePrices.push(next);
+          renderResalePrices();
+          updateAllTables();
+        });
+
+        const allInitialInstances = document.querySelectorAll(
+          '#calculator-container .calculator-instance'
+        );
+        const addFieldButton = document.getElementById('add-field-button');
+        const purchasePriceInput = document.getElementById('purchase-price');
+
+        allInitialInstances.forEach((instanceDiv) => {
+          const areaInput = instanceDiv.querySelector('.area-input');
+          if (areaInput) {
+            areaInput.addEventListener('input', () => updateTable(instanceDiv));
+            updateTable(instanceDiv);
+          }
+        });
+
+        if (addFieldButton) {
+          addFieldButton.addEventListener('click', createCalculatorInstance);
+        }
+        if (purchasePriceInput) {
+          purchasePriceInput.addEventListener('input', updateAllTables);
+        }
+      });
+    </script>
+  </body>
+</html>
