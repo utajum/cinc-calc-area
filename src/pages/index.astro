@@ -1,6 +1,6 @@
 ---
 // MK: Преводи и променливи за страницата
-const pageTitle = 'Калкулатор за Загуба на Имот';
+const pageTitle = 'Калкулатор за Загуба';
 const metaDescription =
   'Пресметајте потенцијална загуба на имот врз основа на површина и куповна цена.';
 const metaKeywords =
@@ -38,6 +38,8 @@ const metaKeywords =
         --body-bg: #eef1f5;
         --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
         --grid-gap: 15px;
+        --resale-btn-bg: #28a745;
+        --resale-btn-bg-hover: #218838;
       }
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -74,16 +76,20 @@ const metaKeywords =
       }
       .resale-prices-section {
         margin-bottom: 20px;
-        padding: 15px;
+        padding: 18px 15px 15px 15px;
         background-color: var(--light-bg);
-        border-radius: 5px;
+        border-radius: 7px;
         border: 1px solid var(--border-color);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.07);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
       }
       .resale-prices-label {
-        font-weight: 500;
-        font-size: 0.95em;
+        font-weight: 600;
+        font-size: 1.05em;
         color: var(--label-color);
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         display: block;
       }
       .resale-prices-list {
@@ -94,34 +100,49 @@ const metaKeywords =
       }
       .resale-price-input {
         width: 90px;
-        padding: 7px 8px;
-        border: 1px solid var(--border-color);
-        border-radius: 5px;
-        font-size: 0.95em;
+        padding: 8px 10px;
+        border: 1.5px solid var(--primary-color);
+        border-radius: 6px;
+        font-size: 1em;
         margin-bottom: 0;
+        background: #fff;
+        transition: border-color 0.15s;
+      }
+      .resale-price-input:focus {
+        border-color: var(--success-color);
+        outline: none;
       }
       .add-resale-price-btn {
-        background-color: var(--primary-color);
-        margin-left: 10px;
-        padding: 7px 12px;
+        background-color: var(--resale-btn-bg);
+        margin-left: 0;
+        padding: 8px 18px;
         font-size: 1em;
-        border-radius: 5px;
+        border-radius: 6px;
         border: none;
         color: #fff;
         cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 2px 6px rgba(40, 167, 69, 0.08);
         transition: background-color 0.15s;
+        margin-top: 2px;
       }
       .add-resale-price-btn:hover {
-        background-color: var(--primary-hover-color);
+        background-color: var(--resale-btn-bg-hover);
       }
       .remove-resale-price-btn {
         background: none;
         border: none;
         color: var(--danger-color);
-        font-size: 1.2em;
+        font-size: 1.3em;
         margin-left: 2px;
         cursor: pointer;
         vertical-align: middle;
+        padding: 0 4px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+      .remove-resale-price-btn:hover {
+        color: #a71d2a;
       }
       #calculator-container {
         display: grid;
@@ -150,6 +171,13 @@ const metaKeywords =
         font-size: 1.05em;
         color: #343a40;
         font-weight: 600;
+      }
+      .gross-area-info {
+        font-size: 0.95em;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+        margin-top: 0;
+        font-weight: 500;
       }
       .results-table p {
         margin-top: 0;
@@ -285,7 +313,9 @@ const metaKeywords =
         </div>
       </div>
 
-      <button id="add-field-button">+ Додај Нова Картичка за Површина</button>
+      <button id="add-field-button" class="add-resale-price-btn"
+        >+ Додај Нова Картичка за Површина</button
+      >
     </div>
 
     <script is:inline>
@@ -361,6 +391,7 @@ const metaKeywords =
 
         let tableHTML = `
           <h4>Резултати за ${result.area} м² (Купено по €${result.purchasePricePerSqm.toLocaleString()}/м²)</h4>
+          <div class="gross-area-info">Бруто површина (добиена): <span>${result.area * 2}</span> м²</div>
           <p><strong>Вкупна Куповна Цена: €${result.purchaseCost.toLocaleString()}</strong></p>
           <table>
             <thead>
@@ -459,7 +490,6 @@ const metaKeywords =
           'add-resale-price-btn'
         );
         addResalePriceBtn.addEventListener('click', () => {
-          // Add a new resale price, default to last+100 or 1000 if empty
           let next =
             resalePrices.length > 0
               ? resalePrices[resalePrices.length - 1] + 100
