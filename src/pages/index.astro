@@ -40,6 +40,8 @@ const metaKeywords =
         --grid-gap: 15px;
         --resale-btn-bg: #28a745;
         --resale-btn-bg-hover: #218838;
+        --loss-header-bg: #ffeaea;
+        --loss-value: #dc3545 !important;
       }
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -196,6 +198,7 @@ const metaKeywords =
         padding: 6px 8px;
         text-align: right;
         vertical-align: middle;
+        color: var(--loss-value);
       }
       .results-table th {
         background-color: #e9ecef;
@@ -211,7 +214,7 @@ const metaKeywords =
       }
       .loss-value {
         font-weight: bold;
-        color: var(--danger-color);
+        color: red !important;
       }
       .initial-message {
         font-size: 0.9em;
@@ -320,7 +323,7 @@ const metaKeywords =
 
     <script is:inline>
       // Dynamic resale prices state
-      let resalePrices = [1850, 1950, 2050, 2150];
+      let resalePrices = [1850, 1950, 2050];
 
       function renderResalePrices() {
         const list = document.getElementById('resale-prices-list');
@@ -396,9 +399,9 @@ const metaKeywords =
           <table>
             <thead>
               <tr>
-                <th>Продажна Цена по м² (€)</th>
-                <th>Вкупна Продажна Вредност (€)</th>
-                <th>Потенцијална Загуба (€)</th>
+                <th>Продажна Цена по м²</th>
+                <th>Вкупна Продажна Вредност</th>
+                <th class="loss-header">Загуба</th>
               </tr>
             </thead>
             <tbody>
